@@ -37,6 +37,26 @@ bash wizard/customer_deploy_wizard.sh
 - `~/CUSTOMER_HANDOFF_<brand>_<date>.md` — 給客戶 IT 的 handoff 文件
 - WP admin 帳號 / 密碼(對話框顯示一次,**請立即存入密碼管理員**)
 
+## 升級現有部署
+
+簽約後 ProLink AI 會定期推 release-v*.* 新版到 GCP Artifact Registry。已部署的客戶執行下列指令一鍵升級:
+
+```bash
+cd ~/prolink-ai-deploy
+bash wizard/customer_update_wizard.sh
+```
+
+升級流程(4 步):
+
+1. 偵測本機 backend image tag
+2. 查 Registry 最新 release tag
+3. 比對版本、whiptail 顯示確認對話框
+4. `docker compose pull` → `up -d` → healthcheck
+
+升級失敗(`docker pull` 回 401/403)= 月費停繳、授權失效。精靈會自動顯示「請聯繫 LINE ID: 0919yen」訊息;既有部署 image 仍在本機、不受影響、可繼續使用。
+
+詳見 [UPDATE.md](UPDATE.md) 與 [CHANGELOG.md](CHANGELOG.md)。
+
 ## 常見問題
 
 **Q: 跑到一半失敗怎麼辦?**
@@ -47,6 +67,9 @@ A: 設 `TEST_MODE=1` 環境變數、所有外呼走 dummy。
 
 **Q: whiptail 跳不出來?**
 A: 精靈會自動 fallback 純文字 prompt、不影響功能。如需 TUI:`sudo apt-get install whiptail`。
+
+**Q: 升級時 docker pull 報「unauthorized」怎麼辦?**
+A: 表示 GCP 授權失效(月費停繳或客戶 SA 設定問題)。請聯繫 LINE ID: 0919yen 處理。
 
 ---
 

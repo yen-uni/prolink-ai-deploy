@@ -1,0 +1,83 @@
+# ProLink AI release-v1.0 docker compose
+#
+# 4-service stack: backend / wordpress / redis / db
+# Backend image: 從 Artifact Registry pull release-v1.0 tag (商業化客戶 image)
+# WordPress: 公開 image,plugin 透過 wp-data volume + wizard step 安裝
+# 升級: wizard/customer_update_wizard.sh 會把 release-v1.0 tag 換成最新 release-*
+#
+# 環境變數 (.env): WP_DB_PASSWORD / WP_DB_ROOT_PASSWORD / UNI_TENANT_ID
+
+services:
+  backend:
+    image: asia-east1-docker.pkg.dev/ecstatic-emblem-490504-d5/uni-ai-backend/uni-ai-backend:release-v1.0
+    container_name: uni-ai-backend
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    env_file:
+      - ./.env
+    environment:
+      UNI_TENANT_ID: "${UNI_TENANT_ID:?UNI_TENANT_ID must be set in .env}"
+    volumes:
+      - backend-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 120s
+
+  wordpress:
+    image: wordpress:6.7-php8.2-apache
+    container_name: uni-wordpress
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD:?WP_DB_PASSWORD must be set in .env}
+      WORDPRESS_DB_NAME: wordpress
+      PYTHON_API_HOST: backend
+      PYTHON_API_PORT: 8003
+    volumes:
+      - wp-data:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+
+  redis:
+    image: redis:7-alpine
+    container_name: uni-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1000", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db:
+    image: mariadb:10.11
+    container_name: uni-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${WP_DB_ROOT_PASSWORD:?WP_DB_ROOT_PASSWORD must be set in .env}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: ${WP_DB_PASSWORD:?WP_DB_PASSWORD must be set in .env}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  backend-data:
+  wp-data:
+  db-data:
+  redis-data:
