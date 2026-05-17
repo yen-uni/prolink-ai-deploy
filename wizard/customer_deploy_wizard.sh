@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# wizard/customer_deploy_wizard.sh — 環久 AI 客戶部署 wizard (FP102 Phase A)
+# wizard/customer_deploy_wizard.sh — ProLink AI 客戶部署 wizard (FP102 Phase A)
 # Usage:
 #   bash wizard/customer_deploy_wizard.sh             # 真實模式
 #   TEST_MODE=1 bash wizard/customer_deploy_wizard.sh # 全外呼 echo dummy
@@ -27,7 +27,7 @@ source "$WIZARD_DIR/lib/validate.sh"
 mkdir -p "$(dirname "$LOG_FILE")"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
-prompt_box "環久 AI 客戶部署 wizard (FP102) — $(date)"
+prompt_box "ProLink AI 客戶部署 wizard (FP102) — $(date)"
 prompt_info "log file: $LOG_FILE"
 if [ "${TEST_MODE:-0}" = "1" ]; then
   prompt_warn "TEST_MODE=1 — 所有外呼 (gcloud/OpenAI/Anthropic/docker/mysql/certbot/LINE) 將 echo dummy 不真實執行"
@@ -300,7 +300,7 @@ step16_handoff_doc() {
   [ -z "$backend_svc" ] && backend_svc="backend"
 
   cat > "$out" <<EOF
-# ${brand_zh} (${brand_en}) — 環久 AI 部署 Handoff
+# ${brand_zh} (${brand_en}) — ProLink AI 部署 Handoff
 產生時間: $(date -Iseconds)
 
 ## 1. GCP / VM
@@ -351,7 +351,7 @@ sudo certbot renew --nginx
 \`\`\`
 
 ## 6. 客服 / 技術支援
-- 環久 AI 技術支援: support@uni-ai.example.com
+- ProLink AI 技術支援: LINE ID: 0919yen
 - Yen 直線: (填入)
 - GitHub repo (內部): https://github.com/yen-uni/rag
 
@@ -372,7 +372,7 @@ sudo certbot renew --nginx
    - 確認 LINE Developer Console 的 webhook URL 設為 \`https://${domain}/wp-json/uni-ai/v1/line/webhook\`
    - 確認 webhook verify 按鈕回 \`Success\`
    - 看後端 log: \`docker compose logs -f ${backend_svc} | grep -i line\`
-5. 驗收通過後請回報環久 AI 技術支援、正式交付
+5. 驗收通過後請回報ProLink AI 技術支援、正式交付
 
 **為什麼這步需要真人**: LINE 平台不允許 backend 模擬 user 訊息、必須真實 LINE 帳號 push 才會觸發 webhook。
 EOF
