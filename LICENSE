@@ -1,0 +1,30 @@
+ProLink AI Deployment Wizard — Source-Available License
+
+Copyright (c) 2026 ProLink AI. All rights reserved.
+
+This software is made source-available for the purpose of customer self-service
+deployment and operational transparency. It is NOT open source.
+
+Permitted use:
+  - Customers of ProLink AI may use this software to deploy and operate
+    ProLink AI services on their own infrastructure.
+  - Modification of this software for internal customer operational needs
+    is permitted, provided no modified version is redistributed.
+
+Prohibited use:
+  - Redistribution, sublicensing, sale, or hosting of this software
+    (modified or unmodified) for third parties without express written
+    permission from ProLink AI.
+  - Use of this software to operate any AI service that is not ProLink AI
+    or an authorized ProLink AI deployment.
+  - Removal or alteration of ProLink AI branding, copyright notices, or
+    this license file.
+
+Reverse engineering for security audit purposes is permitted; please
+report findings to ProLink AI.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY ARISING FROM USE OF THE SOFTWARE.
+
+For licensing inquiries: contact ProLink AI.
